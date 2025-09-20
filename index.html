@@ -117,6 +117,8 @@
   (function(){
     const LS_KEY = 'dap_kartei_lu_catAB_v1';
     const state = load();
+    const DELETE_CODE = '1130';
+
     const els = {
       list: document.getElementById('list'),
       q: document.getElementById('q'),
@@ -147,6 +149,7 @@
       save();
     }
 
+    // Events
     els.q.addEventListener('input', render);
     els.fBeruf.addEventListener('change', render);
     els.fCat.addEventListener('change', render);
@@ -218,8 +221,16 @@
       save(); hydrateFilters(); render(); closeDialog(); toast('Gespeichert');
     }
 
+    function requireCode(){
+      const entered = prompt('Bitte Code eingeben, um zu löschen:');
+      if(entered === null) return false;
+      if(entered !== DELETE_CODE){ toast('Falscher Code'); return false; }
+      return true;
+    }
+
     function deleteEntry(){
       if(!editingId) return; 
+      if(!requireCode()) return;
       state.entries = state.entries.filter(e=> e.id!==editingId);
       save(); render(); closeDialog(); toast('Gelöscht');
     }
@@ -258,6 +269,7 @@
       }));
       document.querySelectorAll('.btnDel').forEach(b=> b.addEventListener('click', ev=>{
         const id = ev.currentTarget.getAttribute('data-id');
+        if(!requireCode()) return;
         state.entries = state.entries.filter(x=>x.id!==id); save(); render(); toast('Gelöscht');
       }));
     }
