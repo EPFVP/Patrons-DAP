@@ -4,278 +4,138 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Patrons de stage</title>
-  <!-- Google Font -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-  <!-- Font Awesome -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <style>
-    body {
-      margin: 0;
-      font-family: 'Inter', sans-serif;
-      background: #f9fafb;
-      color: #1f2937;
-    }
-    header {
-      background: linear-gradient(90deg,#3b82f6,#2563eb);
-      color: #fff;
-      padding: 16px 24px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      gap: 10px;
-    }
-    header .left {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-    }
-    header img { height: 48px; }
-    h1 { margin: 0; font-size: 22px; font-weight: 700; }
-    .sub { font-size: 13px; opacity: 0.9; }
-    .toolbar button, .toolbar label {
-      background: transparent;
-      border: none;
-      color: #fff;
-      font-size: 18px;
-      cursor: pointer;
-      margin-left: 12px;
-      transition: transform .2s;
-    }
-    .toolbar button:hover, .toolbar label:hover { transform: scale(1.1); }
-    .toolbar input { display: none; }
-
-    .container {
-      max-width: 1100px;
-      margin: 20px auto;
-      padding: 0 16px 60px;
-    }
-
-    /* Filter responsive */
-    .filter {
-      background: #fff;
-      border-radius: 14px;
-      padding: 16px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-      margin-bottom: 20px;
-      display: grid;
-      gap: 14px;
-    }
-    @media(min-width: 700px){
-      .filter { grid-template-columns: 2fr 1fr; }
-    }
-
-    label { font-weight: 600; margin-bottom: 6px; display: block; }
-    input, select, textarea {
-      width: 100%;
-      padding: 10px 12px;
-      border: 1px solid #e5e7eb;
-      border-radius: 10px;
-      font-family: inherit;
-      font-size: 14px;
-    }
-    input:focus, select:focus, textarea:focus {
-      outline: none;
-      border-color: #93c5fd;
-      box-shadow: 0 0 0 2px #bfdbfe;
-    }
-
-    /* Grid für Karten */
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill,minmax(300px,1fr));
-      gap: 18px;
-    }
-    .card {
-      background: #fff;
-      border-radius: 16px;
-      padding: 18px;
-      box-shadow: 0 6px 20px rgba(0,0,0,0.06);
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      min-height: 180px;
-      word-wrap: break-word;
-      transition: transform .2s, box-shadow .2s;
-    }
-    .card:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 24px rgba(0,0,0,0.08);
-    }
-    .card h3 { margin: 0 0 8px; font-size: 18px; font-weight: 600; }
-    .info {
-      font-size: 14px;
-      margin: 6px 0;
-      display: flex;
-      align-items: flex-start;
-      gap: 8px;
-      color: #374151;
-    }
-    .info i { color: #2563eb; margin-top: 3px; }
-
-    .actions {
-      margin-top: auto;
-      display: flex;
-      gap: 10px;
-    }
-    .actions button {
-      flex: 1;
-      padding: 8px 12px;
-      border-radius: 10px;
-      border: none;
-      cursor: pointer;
-      font-weight: 600;
-      transition: background .2s;
-    }
-    .actions .edit { background: #e0f2fe; color: #0369a1; }
-    .actions .edit:hover { background: #bae6fd; }
-    .actions .delete { background: #fee2e2; color: #b91c1c; }
-    .actions .delete:hover { background: #fecaca; }
-
-    /* Floating Add Button */
-    #btnNew {
-      position: fixed;
-      right: 24px;
-      bottom: 24px;
-      background: #2563eb;
-      color: #fff;
-      border: none;
-      border-radius: 50%;
-      width: 56px;
-      height: 56px;
-      font-size: 24px;
-      cursor: pointer;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-      transition: background .2s, transform .2s;
-      z-index: 50;
-    }
-    #btnNew:hover { background: #1e40af; transform: scale(1.05); }
-
+    *,*::before,*::after{box-sizing:border-box}
+    html,body{height:100%}
+    body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;background:#f6f7fb;color:#0f172a;line-height:1.45}
+    /* Header */
+    header{background:linear-gradient(90deg,#3b82f6,#2563eb);color:#fff;padding:16px}
+    .header-inner{max-width:1100px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+    .brand{display:flex;align-items:center;gap:14px;min-width:0}
+    .brand img{height:48px}
+    .brand h1{margin:0;font-size:22px;font-weight:700}
+    .brand .sub{font-size:13px;opacity:.9}
+    .tools{display:flex;gap:10px}
+    .btn-icon{border:1px solid #ffffff33;background:#ffffff20;color:#fff;padding:10px 12px;border-radius:12px;font-weight:600;cursor:pointer}
+    .btn-icon:hover{background:#ffffff33}
+    /* Layout */
+    .container{max-width:1100px;margin:20px auto 80px;padding:0 16px}
+    /* Filter */
+    .filter{background:#fff;border:1px solid #e5e7eb;border-radius:16px;box-shadow:0 6px 18px rgba(15,23,42,.06);padding:16px;display:grid;gap:14px}
+    @media(min-width:720px){.filter{grid-template-columns:2fr 1fr}}
+    label{display:block;font-weight:600;margin-bottom:6px}
+    input,select,textarea{width:100%;padding:11px 12px;border:1px solid #e5e7eb;border-radius:10px;font:inherit;background:#fff}
+    input:focus,select:focus,textarea:focus{outline:none;border-color:#93c5fd;box-shadow:0 0 0 2px #bfdbfe}
+    /* Grid/Karten */
+    .grid{display:grid;gap:18px;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));margin-top:16px}
+    .card{display:flex;flex-direction:column;gap:8px;background:#fff;border:1px solid #e5e7eb;border-radius:16px;padding:18px;box-shadow:0 6px 18px rgba(15,23,42,.06);overflow-wrap:anywhere;transition:transform .15s,box-shadow .15s}
+    .card:hover{transform:translateY(-2px);box-shadow:0 10px 24px rgba(15,23,42,.09)}
+    .card h3{margin:0 0 4px;font-size:18px;font-weight:700}
+    .info{display:grid;grid-template-columns:20px 1fr;align-items:start;gap:8px;color:#334155}
+    .info .ico{color:#2563eb}
+    .actions{margin-top:10px;display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    .btn{border:0;border-radius:10px;padding:10px 12px;font-weight:600;cursor:pointer}
+    .btn-edit{background:#e0f2fe;color:#075985}.btn-edit:hover{background:#bae6fd}
+    .btn-del{background:#fee2e2;color:#b91c1c}.btn-del:hover{background:#fecaca}
+    /* Floating Add */
+    #btnNew{position:fixed;right:22px;bottom:22px;width:56px;height:56px;border-radius:50%;border:0;background:#2563eb;color:#fff;font-size:26px;box-shadow:0 6px 18px rgba(2,6,23,.25);cursor:pointer;z-index:50}
+    #btnNew:hover{background:#1e40af}
     /* Dialog */
-    #dialog {
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.4);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 100;
-    }
-    #dialog.hidden { display: none; }
-    #dialog .content {
-      background: #fff;
-      border-radius: 16px;
-      padding: 20px;
-      width: 100%;
-      max-width: 500px;
-      animation: zoomIn .2s ease;
-    }
-    @keyframes zoomIn {
-      from { transform: scale(0.9); opacity: 0; }
-      to { transform: scale(1); opacity: 1; }
-    }
-    .dialog-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 12px;
-    }
-    .dialog-header strong { font-size: 18px; }
-    .dialog-footer {
-      margin-top: 16px;
-      display: flex;
-      justify-content: flex-end;
-      gap: 10px;
-    }
-    .dialog-footer button {
-      padding: 8px 14px;
-      border: none;
-      border-radius: 10px;
-      font-weight: 600;
-      cursor: pointer;
-    }
-    .save { background: #2563eb; color: #fff; }
-    .cancel { background: #e5e7eb; }
-    .delete { background: #ef4444; color: #fff; }
-
+    #dialog{position:fixed;inset:0;background:rgba(0,0,0,.4);display:none;align-items:center;justify-content:center;padding:16px;z-index:100}
+    #dialog.open{display:flex}
+    .dlg{background:#fff;border-radius:16px;width:100%;max-width:560px;border:1px solid #e5e7eb;box-shadow:0 20px 36px rgba(15,23,42,.18);max-height:min(90vh,820px);overflow:auto;padding:18px}
+    .dlg-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px}
+    .dlg-head strong{font-size:18px}
+    .dlg-foot{display:flex;justify-content:flex-end;gap:10px;margin-top:14px}
+    .btn-cancel{background:#e5e7eb}.btn-save{background:#2563eb;color:#fff}
+    .btn-cancel:hover{background:#d1d5db}.btn-save:hover{background:#1e40af}
     /* Toast */
-    #toast {
-      position: fixed;
-      right: 20px;
-      bottom: 20px;
-      background: #111827;
-      color: #fff;
-      padding: 10px 14px;
-      border-radius: 10px;
-      opacity: .95;
-    }
-    #toast.hidden { display: none; }
+    #toast{position:fixed;right:18px;bottom:18px;background:#111827;color:#fff;padding:10px 14px;border-radius:10px;opacity:.96;display:none;z-index:120}
+    #toast.show{display:block}
+    @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
   </style>
 </head>
 <body>
+  <!-- Header -->
   <header>
-    <div class="left">
-      <img src="fieldgen-logo.png" alt="Fieldgen Logo">
-      <div>
-        <h1>Patrons de stage</h1>
-        <div class="sub">Übersicht für Lehrkräfte – modern & einfach</div>
+    <div class="header-inner">
+      <div class="brand">
+        <img src="fieldgen-logo.png" alt="Fieldgen Logo">
+        <div>
+          <h1>Patrons de stage</h1>
+          <div class="sub">Übersicht für Lehrkräfte – modern & einfach</div>
+        </div>
       </div>
-    </div>
-    <div class="toolbar">
-      <button id="btnExport" title="Export"><i class="fa-solid fa-download"></i></button>
-      <label for="fileImport" title="Import"><i class="fa-solid fa-upload"></i>
-        <input id="fileImport" type="file" accept="application/json">
-      </label>
+      <div class="tools">
+        <button class="btn-icon" id="btnExport">Export</button>
+        <label class="btn-icon">Import
+          <input id="fileImport" type="file" accept="application/json" style="display:none">
+        </label>
+      </div>
     </div>
   </header>
 
+  <!-- Inhalt -->
   <main class="container">
-    <div class="filter">
+    <!-- Filter -->
+    <section class="filter">
       <div>
-        <label>Suchen</label>
+        <label for="q">Suchen</label>
         <input id="q" placeholder="Betrieb, Beruf, Adresse, Kontakt, Remarque">
       </div>
       <div>
-        <label>Beruf</label>
+        <label for="fBeruf">Beruf</label>
         <select id="fBeruf"><option value="">Alle</option></select>
       </div>
-    </div>
-    <div class="grid" id="list"></div>
+    </section>
+
+    <!-- Liste -->
+    <section class="grid" id="list"></section>
   </main>
 
-  <button id="btnNew"><i class="fa-solid fa-plus"></i></button>
+  <!-- Neuer Betrieb -->
+  <button id="btnNew" aria-label="Neuer Betrieb">+</button>
 
-  <div id="dialog" class="hidden">
-    <div class="content">
-      <div class="dialog-header">
+  <!-- Dialog -->
+  <div id="dialog" role="dialog" aria-modal="true" aria-labelledby="dlgTitle">
+    <div class="dlg">
+      <div class="dlg-head">
         <strong id="dlgTitle">Neuer Betrieb</strong>
-        <button class="cancel" id="dlgCancel">✕</button>
+        <button class="btn btn-cancel" id="dlgCancel">Schließen</button>
       </div>
-      <label>Betrieb *</label>
-      <input id="iBetrieb">
-      <label>Beruf *</label>
-      <input id="iBeruf" list="dlBerufe">
+
+      <label for="iBetrieb">Betrieb *</label>
+      <input id="iBetrieb"/>
+
+      <label for="iBeruf">Beruf *</label>
+      <input id="iBeruf" list="dlBerufe" placeholder="z. B. Schreiner/in"/>
       <datalist id="dlBerufe"></datalist>
-      <label>Adresse *</label>
-      <textarea id="iAdresse" rows="2"></textarea>
-      <label>Kontakt *</label>
-      <textarea id="iKontakt" rows="2"></textarea>
-      <label>Remarque</label>
-      <textarea id="iRemarque" rows="2"></textarea>
-      <div class="dialog-footer">
-        <button class="delete" id="dlgDelete">Löschen</button>
-        <button class="save" id="dlgSave">Speichern</button>
+
+      <label for="iAdresse">Adresse *</label>
+      <textarea id="iAdresse" rows="2" placeholder="Straße, PLZ Ort"></textarea>
+
+      <label for="iKontakt">Kontakt *</label>
+      <textarea id="iKontakt" rows="2" placeholder="Name, Telefon, E-Mail"></textarea>
+
+      <label for="iRemarque">Remarque</label>
+      <textarea id="iRemarque" rows="2" placeholder="Bemerkungen / Hinweise"></textarea>
+
+      <div class="dlg-foot">
+        <button class="btn btn-del" id="dlgDelete">Löschen</button>
+        <button class="btn btn-save" id="dlgSave">Speichern</button>
       </div>
     </div>
   </div>
 
-  <div id="toast" class="hidden"></div>
+  <div id="toast"></div>
 
   <script>
   (function(){
-    const LS_KEY = 'patrons_stage_v4';
-    const state = load();
+    const LS_KEY = 'patrons_stage_v6';
     const DELETE_CODE = '1130';
+
+    const state = load();
     const els = {
       list: document.getElementById('list'),
       q: document.getElementById('q'),
@@ -283,28 +143,30 @@
       btnNew: document.getElementById('btnNew'),
       btnExport: document.getElementById('btnExport'),
       fileImport: document.getElementById('fileImport'),
-      dlg: document.getElementById('dialog'),
+      dialog: document.getElementById('dialog'),
       dlgTitle: document.getElementById('dlgTitle'),
+      dlgCancel: document.getElementById('dlgCancel'),
+      dlgDelete: document.getElementById('dlgDelete'),
+      dlgSave: document.getElementById('dlgSave'),
       iBetrieb: document.getElementById('iBetrieb'),
       iBeruf: document.getElementById('iBeruf'),
       iAdresse: document.getElementById('iAdresse'),
       iKontakt: document.getElementById('iKontakt'),
       iRemarque: document.getElementById('iRemarque'),
-      dlgSave: document.getElementById('dlgSave'),
-      dlgCancel: document.getElementById('dlgCancel'),
-      dlgDelete: document.getElementById('dlgDelete'),
       dlBerufe: document.getElementById('dlBerufe'),
       toast: document.getElementById('toast'),
     };
 
+    // Demo-Einträge beim ersten Start
     if(state.entries.length === 0){
       state.entries.push(
-        {id:uid(), betrieb:'Holzkunst Wagner', beruf:'Schreiner/in', adresse:'Rue de l Atelier 12, Ettelbruck', kontakt:'Jean Wagner – +352 2456 7890', remarque:'Gute Betreuung'},
-        {id:uid(), betrieb:'Boulangerie du Parc', beruf:'Bäcker/in', adresse:'Avenue du Parc 3, Luxembourg', kontakt:'Mina Pereira – +352 2211 3344', remarque:'Früher Beginn'}
+        {id:uid(), betrieb:'Boulangerie du Parc', beruf:'Bäcker/in', adresse:'Avenue du Parc 3, Luxembourg', kontakt:'Mina Pereira – +352 2211 3344', remarque:'Früher Beginn'},
+        {id:uid(), betrieb:'Holzkunst Wagner',   beruf:'Schreiner/in', adresse:"Rue de l'Atelier 12, Ettelbruck", kontakt:'Jean Wagner – +352 2456 7890', remarque:'Gute Betreuung'}
       );
       save();
     }
 
+    // Events
     els.q.addEventListener('input', render);
     els.fBeruf.addEventListener('change', render);
     els.btnNew.addEventListener('click', ()=> openDialog());
@@ -317,20 +179,24 @@
     function uid(){ return Math.random().toString(36).slice(2,10) }
     function load(){ try{ return JSON.parse(localStorage.getItem(LS_KEY)) || {entries:[], berufe:[]} }catch{ return {entries:[], berufe:[]} } }
     function save(){ localStorage.setItem(LS_KEY, JSON.stringify(state)); }
-    function toast(msg){ els.toast.textContent = msg; els.toast.classList.remove('hidden'); setTimeout(()=> els.toast.classList.add('hidden'), 2200); }
+    function showToast(msg){ els.toast.textContent = msg; els.toast.classList.add('show'); setTimeout(()=> els.toast.classList.remove('show'), 1800); }
 
     function onExport(){
       const blob = new Blob([JSON.stringify(state,null,2)], {type:'application/json'});
       const url = URL.createObjectURL(blob);
-      const a = document.createElement('a'); a.href=url; a.download = 'patrons_de_stage.json'; a.click();
+      const a = document.createElement('a'); a.href=url; a.download='patrons_de_stage.json'; a.click();
       URL.revokeObjectURL(url);
     }
     function onImport(e){
       const file = e.target.files && e.target.files[0]; if(!file) return;
       file.text().then(txt=>{
-        try{ const json = JSON.parse(txt); if(!Array.isArray(json.entries)) throw 0;
-          state.entries = json.entries; state.berufe = json.berufe || []; save(); hydrateFilters(); render(); toast('Import erfolgreich');
-        }catch{ toast('Import fehlgeschlagen'); }
+        try{
+          const json = JSON.parse(txt);
+          if(!Array.isArray(json.entries)) throw 0;
+          state.entries = json.entries;
+          state.berufe = json.berufe || [];
+          save(); hydrateFilters(); render(); showToast('Import erfolgreich');
+        }catch{ showToast('Import fehlgeschlagen'); }
       }).finally(()=> e.target.value = '');
     }
 
@@ -339,59 +205,104 @@
       editingId = entry?.id || null;
       els.dlgTitle.textContent = editingId ? 'Eintrag bearbeiten' : 'Neuer Betrieb';
       els.iBetrieb.value = entry?.betrieb || '';
-      els.iBeruf.value = entry?.beruf || '';
+      els.iBeruf.value   = entry?.beruf || '';
       els.iAdresse.value = entry?.adresse || '';
       els.iKontakt.value = entry?.kontakt || '';
-      els.iRemarque.value = entry?.remarque || '';
+      els.iRemarque.value= entry?.remarque || '';
       els.dlgDelete.style.display = editingId ? 'inline-block' : 'none';
-      els.dlg.classList.remove('hidden');
+      els.dialog.classList.add('open');
     }
-    function closeDialog(){ els.dlg.classList.add('hidden'); }
+    function closeDialog(){ els.dialog.classList.remove('open'); }
+
     function saveEntry(){
-      const item = { id: editingId || uid(), betrieb: els.iBetrieb.value.trim(), beruf: els.iBeruf.value.trim(), adresse: els.iAdresse.value.trim(), kontakt: els.iKontakt.value.trim(), remarque: els.iRemarque.value.trim() };
-      if(!item.betrieb || !item.beruf || !item.adresse || !item.kontakt){ return toast('Bitte Pflichtfelder ausfüllen'); }
+      const item = {
+        id: editingId || uid(),
+        betrieb: els.iBetrieb.value.trim(),
+        beruf:   els.iBeruf.value.trim(),
+        adresse: els.iAdresse.value.trim(),
+        kontakt: els.iKontakt.value.trim(),
+        remarque:els.iRemarque.value.trim(),
+      };
+      if(!item.betrieb || !item.beruf || !item.adresse || !item.kontakt){
+        return showToast('Bitte Betrieb, Beruf, Adresse, Kontakt ausfüllen');
+      }
       const idx = state.entries.findIndex(e=> e.id===item.id);
-      if(idx>=0) state.entries[idx]=item; else state.entries.unshift(item);
+      if(idx>=0) state.entries[idx]=item; else state.entries.push(item); // Push, damit Sortierung konsistent wirkt
       if(item.beruf && !state.berufe.includes(item.beruf)) state.berufe.push(item.beruf);
-      state.berufe.sort((a,b)=>a.localeCompare(b,'de'));
-      save(); hydrateFilters(); render(); closeDialog(); toast('Gespeichert');
+      state.berufe.sort((a,b)=> a.localeCompare(b,'de'));
+      save(); hydrateFilters(); render(); closeDialog(); showToast('Gespeichert');
     }
-    function requireCode(){ const entered = prompt('Bitte Code eingeben, um zu löschen:'); if(entered===null) return false; if(entered!=='1130'){ toast('Falscher Code'); return false; } return true; }
-    function deleteEntry(){ if(!editingId) return; if(!requireCode()) return; state.entries = state.entries.filter(e=> e.id!==editingId); save(); render(); closeDialog(); toast('Gelöscht'); }
+
+    function requireCode(){
+      const entered = prompt('Bitte Code eingeben, um zu löschen:');
+      if(entered===null) return false;
+      if(entered!==DELETE_CODE){ showToast('Falscher Code'); return false; }
+      return true;
+    }
+    function deleteEntry(){
+      if(!editingId) return;
+      if(!requireCode()) return;
+      state.entries = state.entries.filter(e=> e.id!==editingId);
+      save(); render(); closeDialog(); showToast('Gelöscht');
+    }
+
     function hydrateFilters(){
-      const all = Array.from(new Set(state.berufe.concat(state.entries.map(e=>e.beruf)))).filter(Boolean).sort((a,b)=>a.localeCompare(b,'de'));
-      els.fBeruf.innerHTML = '<option value=\"\">Alle</option>' + all.map(b=>`<option>${b}</option>`).join('');
-      els.dlBerufe.innerHTML = all.map(b=>`<option value=\"${b}\">`).join('');
+      const all = Array.from(new Set((state.berufe||[]).concat(state.entries.map(e=>e.beruf)))).filter(Boolean).sort((a,b)=> a.localeCompare(b,'de'));
+      els.fBeruf.innerHTML = '<option value="">Alle</option>' + all.map(b=>`<option>${esc(b)}</option>`).join('');
+      els.dlBerufe.innerHTML = all.map(b=>`<option value="${esc(b)}">`).join('');
     }
+
     function render(){
-      const q = els.q.value.trim().toLowerCase(); const fB = els.fBeruf.value;
-      const list = state.entries.filter(e=>{
-        const qOK = q ? [e.betrieb,e.beruf,e.adresse,e.kontakt,e.remarque].filter(Boolean).some(v=>v.toLowerCase().includes(q)) : true;
-        const bOK = fB ? e.beruf===fB : true;
+      const q  = els.q.value.trim().toLowerCase();
+      const fB = els.fBeruf.value;
+
+      // filtern
+      let list = state.entries.filter(e=>{
+        const qOK = q ? [e.betrieb,e.beruf,e.adresse,e.kontakt,e.remarque]
+          .filter(Boolean)
+          .some(v => String(v).toLowerCase().includes(q)) : true;
+        const bOK = fB ? e.beruf === fB : true;
         return qOK && bOK;
       });
-      els.list.innerHTML = list.map(e=> `
-        <div class=\"card\">
-          <h3>${esc(e.betrieb)}</h3>
-          <div class=\"info\"><i class=\"fa-solid fa-briefcase\"></i> ${esc(e.beruf)}</div>
-          <div class=\"info\"><i class=\"fa-solid fa-location-dot\"></i> ${esc(e.adresse)}</div>
-          <div class=\"info\"><i class=\"fa-solid fa-user\"></i> ${esc(e.kontakt)}</div>
-          ${e.remarque ? `<div class=\"info\"><i class=\"fa-solid fa-note-sticky\"></i> ${esc(e.remarque)}</div>` : ''}
-          <div class=\"actions\">
-            <button class=\"edit\" data-edit=\"${e.id}\"><i class=\"fa-solid fa-pen\"></i> Bearbeiten</button>
-            <button class=\"delete\" data-del=\"${e.id}\"><i class=\"fa-solid fa-trash\"></i> Löschen</button>
+
+      // alphabetisch nach Betrieb sortieren (deutsche Sortierung)
+      list.sort((a,b)=> a.betrieb.localeCompare(b.betrieb,'de',{sensitivity:'base'}));
+
+      // rendern
+      els.list.innerHTML = list.map(e => `
+        <article class="card">
+          <h3 title="${esc(e.betrieb)}">${esc(e.betrieb)}</h3>
+          <div class="info"><span class="ico">💼</span><span>${esc(e.beruf)}</span></div>
+          <div class="info"><span class="ico">📍</span><span>${esc(e.adresse)}</span></div>
+          <div class="info"><span class="ico">👤</span><span>${esc(e.kontakt)}</span></div>
+          ${e.remarque ? `<div class="info"><span class="ico">📝</span><span>${esc(e.remarque)}</span></div>` : ''}
+          <div class="actions">
+            <button class="btn btn-edit" data-edit="${e.id}">Bearbeiten</button>
+            <button class="btn btn-del"  data-del="${e.id}">Löschen</button>
           </div>
-        </div>
+        </article>
       `).join('');
-      document.querySelectorAll('[data-edit]').forEach(b=> b.addEventListener('click', ev=>{
-        const id = ev.currentTarget.getAttribute('data-edit'); const entry = state.entries.find(x=>x.id===id); openDialog(entry);
-      }));
-      document.querySelectorAll('[data-del]').forEach(b=> b.addEventListener('click', ev=>{
-        const id = ev.currentTarget.getAttribute('data-del'); if(!requireCode()) return;
-        state.entries = state.entries.filter(x=>x.id!==id); save(); render(); toast('Gelöscht');
-      }));
+
+      // Aktionen
+      els.list.querySelectorAll('[data-edit]').forEach(b=>{
+        b.addEventListener('click', ev=>{
+          const id = ev.currentTarget.getAttribute('data-edit');
+          const entry = state.entries.find(x=> x.id===id);
+          openDialog(entry);
+        });
+      });
+      els.list.querySelectorAll('[data-del]').forEach(b=>{
+        b.addEventListener('click', ev=>{
+          const id = ev.currentTarget.getAttribute('data-del');
+          if(!requireCode()) return;
+          state.entries = state.entries.filter(x=> x.id!==id);
+          save(); render(); showToast('Gelöscht');
+        });
+      });
     }
-    function esc(s){ return (s||'').replace(/[&<>\"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;'}[c])); }
+
+    function esc(s){ return String(s||'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+
     hydrateFilters(); render();
   })();
   </script>
