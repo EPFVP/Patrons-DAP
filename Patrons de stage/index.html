@@ -9,6 +9,7 @@
     *,*::before,*::after{box-sizing:border-box}
     html,body{height:100%}
     body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;background:#f6f7fb;color:#0f172a;line-height:1.45}
+
     /* Header */
     header{background:linear-gradient(90deg,#3b82f6,#2563eb);color:#fff;padding:16px}
     .header-inner{max-width:1100px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
@@ -16,17 +17,24 @@
     .brand img{height:48px}
     .brand h1{margin:0;font-size:22px;font-weight:700}
     .brand .sub{font-size:13px;opacity:.9}
-    .tools{display:flex;gap:10px}
-    .btn-icon{border:1px solid #ffffff33;background:#ffffff20;color:#fff;padding:10px 12px;border-radius:12px;font-weight:600;cursor:pointer}
-    .btn-icon:hover{background:#ffffff33}
+
+    .actions-top{display:flex;gap:10px;align-items:center}
+    .btn-primary{
+      background:#fff;color:#0f172a;border:1px solid #ffffff40;
+      padding:10px 14px;border-radius:12px;font-weight:700;cursor:pointer
+    }
+    .btn-primary:hover{background:#f3f4f6}
+
     /* Layout */
     .container{max-width:1100px;margin:20px auto 80px;padding:0 16px}
+
     /* Filter */
     .filter{background:#fff;border:1px solid #e5e7eb;border-radius:16px;box-shadow:0 6px 18px rgba(15,23,42,.06);padding:16px;display:grid;gap:14px}
     @media(min-width:720px){.filter{grid-template-columns:2fr 1fr}}
     label{display:block;font-weight:600;margin-bottom:6px}
     input,select,textarea{width:100%;padding:11px 12px;border:1px solid #e5e7eb;border-radius:10px;font:inherit;background:#fff}
     input:focus,select:focus,textarea:focus{outline:none;border-color:#93c5fd;box-shadow:0 0 0 2px #bfdbfe}
+
     /* Grid/Karten */
     .grid{display:grid;gap:18px;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));margin-top:16px}
     .card{display:flex;flex-direction:column;gap:8px;background:#fff;border:1px solid #e5e7eb;border-radius:16px;padding:18px;box-shadow:0 6px 18px rgba(15,23,42,.06);overflow-wrap:anywhere;transition:transform .15s,box-shadow .15s}
@@ -38,9 +46,14 @@
     .btn{border:0;border-radius:10px;padding:10px 12px;font-weight:600;cursor:pointer}
     .btn-edit{background:#e0f2fe;color:#075985}.btn-edit:hover{background:#bae6fd}
     .btn-del{background:#fee2e2;color:#b91c1c}.btn-del:hover{background:#fecaca}
-    /* Floating Add */
-    #btnNew{position:fixed;right:22px;bottom:22px;width:56px;height:56px;border-radius:50%;border:0;background:#2563eb;color:#fff;font-size:26px;box-shadow:0 6px 18px rgba(2,6,23,.25);cursor:pointer;z-index:50}
-    #btnNew:hover{background:#1e40af}
+
+    /* Floating Add (zusätzlich, gut sichtbar) */
+    #btnNewFloat{
+      position:fixed;right:22px;bottom:22px;width:56px;height:56px;border-radius:50%;border:0;
+      background:#2563eb;color:#fff;font-size:26px;box-shadow:0 6px 18px rgba(2,6,23,.25);cursor:pointer;z-index:50
+    }
+    #btnNewFloat:hover{background:#1e40af}
+
     /* Dialog */
     #dialog{position:fixed;inset:0;background:rgba(0,0,0,.4);display:none;align-items:center;justify-content:center;padding:16px;z-index:100}
     #dialog.open{display:flex}
@@ -50,6 +63,7 @@
     .dlg-foot{display:flex;justify-content:flex-end;gap:10px;margin-top:14px}
     .btn-cancel{background:#e5e7eb}.btn-save{background:#2563eb;color:#fff}
     .btn-cancel:hover{background:#d1d5db}.btn-save:hover{background:#1e40af}
+
     /* Toast */
     #toast{position:fixed;right:18px;bottom:18px;background:#111827;color:#fff;padding:10px 14px;border-radius:10px;opacity:.96;display:none;z-index:120}
     #toast.show{display:block}
@@ -67,11 +81,8 @@
           <div class="sub">Übersicht für Lehrkräfte – modern & einfach</div>
         </div>
       </div>
-      <div class="tools">
-        <button class="btn-icon" id="btnExport">Export</button>
-        <label class="btn-icon">Import
-          <input id="fileImport" type="file" accept="application/json" style="display:none">
-        </label>
+      <div class="actions-top">
+        <button class="btn-primary" id="btnNewTop">➕ Neuer Betrieb</button>
       </div>
     </div>
   </header>
@@ -94,8 +105,8 @@
     <section class="grid" id="list"></section>
   </main>
 
-  <!-- Neuer Betrieb -->
-  <button id="btnNew" aria-label="Neuer Betrieb">+</button>
+  <!-- Floating Add (zusätzlich sichtbar) -->
+  <button id="btnNewFloat" aria-label="Neuer Betrieb">+</button>
 
   <!-- Dialog -->
   <div id="dialog" role="dialog" aria-modal="true" aria-labelledby="dlgTitle">
@@ -132,7 +143,7 @@
 
   <script>
   (function(){
-    const LS_KEY = 'patrons_stage_v6';
+    const LS_KEY = 'patrons_stage_v7';
     const DELETE_CODE = '1130';
 
     const state = load();
@@ -140,9 +151,8 @@
       list: document.getElementById('list'),
       q: document.getElementById('q'),
       fBeruf: document.getElementById('fBeruf'),
-      btnNew: document.getElementById('btnNew'),
-      btnExport: document.getElementById('btnExport'),
-      fileImport: document.getElementById('fileImport'),
+      btnNewTop: document.getElementById('btnNewTop'),
+      btnNewFloat: document.getElementById('btnNewFloat'),
       dialog: document.getElementById('dialog'),
       dlgTitle: document.getElementById('dlgTitle'),
       dlgCancel: document.getElementById('dlgCancel'),
@@ -169,9 +179,8 @@
     // Events
     els.q.addEventListener('input', render);
     els.fBeruf.addEventListener('change', render);
-    els.btnNew.addEventListener('click', ()=> openDialog());
-    els.btnExport.addEventListener('click', onExport);
-    els.fileImport.addEventListener('change', onImport);
+    els.btnNewTop.addEventListener('click', ()=> openDialog());
+    els.btnNewFloat.addEventListener('click', ()=> openDialog());
     els.dlgCancel.addEventListener('click', closeDialog);
     els.dlgSave.addEventListener('click', saveEntry);
     els.dlgDelete.addEventListener('click', deleteEntry);
@@ -181,26 +190,8 @@
     function save(){ localStorage.setItem(LS_KEY, JSON.stringify(state)); }
     function showToast(msg){ els.toast.textContent = msg; els.toast.classList.add('show'); setTimeout(()=> els.toast.classList.remove('show'), 1800); }
 
-    function onExport(){
-      const blob = new Blob([JSON.stringify(state,null,2)], {type:'application/json'});
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a'); a.href=url; a.download='patrons_de_stage.json'; a.click();
-      URL.revokeObjectURL(url);
-    }
-    function onImport(e){
-      const file = e.target.files && e.target.files[0]; if(!file) return;
-      file.text().then(txt=>{
-        try{
-          const json = JSON.parse(txt);
-          if(!Array.isArray(json.entries)) throw 0;
-          state.entries = json.entries;
-          state.berufe = json.berufe || [];
-          save(); hydrateFilters(); render(); showToast('Import erfolgreich');
-        }catch{ showToast('Import fehlgeschlagen'); }
-      }).finally(()=> e.target.value = '');
-    }
-
     let editingId = null;
+
     function openDialog(entry){
       editingId = entry?.id || null;
       els.dlgTitle.textContent = editingId ? 'Eintrag bearbeiten' : 'Neuer Betrieb';
@@ -227,7 +218,7 @@
         return showToast('Bitte Betrieb, Beruf, Adresse, Kontakt ausfüllen');
       }
       const idx = state.entries.findIndex(e=> e.id===item.id);
-      if(idx>=0) state.entries[idx]=item; else state.entries.push(item); // Push, damit Sortierung konsistent wirkt
+      if(idx>=0) state.entries[idx]=item; else state.entries.push(item);
       if(item.beruf && !state.berufe.includes(item.beruf)) state.berufe.push(item.beruf);
       state.berufe.sort((a,b)=> a.localeCompare(b,'de'));
       save(); hydrateFilters(); render(); closeDialog(); showToast('Gespeichert');
@@ -265,7 +256,7 @@
         return qOK && bOK;
       });
 
-      // alphabetisch nach Betrieb sortieren (deutsche Sortierung)
+      // alphabetisch nach Betrieb
       list.sort((a,b)=> a.betrieb.localeCompare(b.betrieb,'de',{sensitivity:'base'}));
 
       // rendern
