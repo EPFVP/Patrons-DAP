@@ -67,7 +67,6 @@
     /* Toast */
     #toast{position:fixed;right:18px;bottom:18px;background:#111827;color:#fff;padding:10px 14px;border-radius:10px;opacity:.96;display:none;z-index:120}
     #toast.show{display:block}
-    @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
   </style>
 </head>
 <body>
@@ -105,7 +104,7 @@
     <section class="grid" id="list"></section>
   </main>
 
-  <!-- Floating Add (zusätzlich sichtbar) -->
+  <!-- Floating Add -->
   <button id="btnNewFloat" aria-label="Neuer Betrieb">+</button>
 
   <!-- Dialog -->
@@ -167,16 +166,14 @@
       toast: document.getElementById('toast'),
     };
 
-    // Demo-Einträge beim ersten Start
     if(state.entries.length === 0){
       state.entries.push(
         {id:uid(), betrieb:'Boulangerie du Parc', beruf:'Bäcker/in', adresse:'Avenue du Parc 3, Luxembourg', kontakt:'Mina Pereira – +352 2211 3344', remarque:'Früher Beginn'},
-        {id:uid(), betrieb:'Holzkunst Wagner',   beruf:'Schreiner/in', adresse:"Rue de l'Atelier 12, Ettelbruck", kontakt:'Jean Wagner – +352 2456 7890', remarque:'Gute Betreuung'}
+        {id:uid(), betrieb:'Holzkunst Wagner', beruf:'Schreiner/in', adresse:"Rue de l'Atelier 12, Ettelbruck", kontakt:'Jean Wagner – +352 2456 7890', remarque:'Gute Betreuung'}
       );
       save();
     }
 
-    // Events
     els.q.addEventListener('input', render);
     els.fBeruf.addEventListener('change', render);
     els.btnNewTop.addEventListener('click', ()=> openDialog());
@@ -225,14 +222,11 @@
     }
 
     function requireCode(){
-      const entered = prompt('Bitte Code eingeben, um zu löschen:');
-      if(entered===null) return false;
-      if(entered!==DELETE_CODE){ showToast('Falscher Code'); return false; }
-      return true;
+      const entered = prompt('Bitte Code eingeben, um zu löschen:'); if(entered===null) return false;
+      if(entered!==DELETE_CODE){ showToast('Falscher Code'); return false; } return true;
     }
     function deleteEntry(){
-      if(!editingId) return;
-      if(!requireCode()) return;
+      if(!editingId) return; if(!requireCode()) return;
       state.entries = state.entries.filter(e=> e.id!==editingId);
       save(); render(); closeDialog(); showToast('Gelöscht');
     }
@@ -247,19 +241,14 @@
       const q  = els.q.value.trim().toLowerCase();
       const fB = els.fBeruf.value;
 
-      // filtern
       let list = state.entries.filter(e=>{
-        const qOK = q ? [e.betrieb,e.beruf,e.adresse,e.kontakt,e.remarque]
-          .filter(Boolean)
-          .some(v => String(v).toLowerCase().includes(q)) : true;
+        const qOK = q ? [e.betrieb,e.beruf,e.adresse,e.kontakt,e.remarque].filter(Boolean).some(v => String(v).toLowerCase().includes(q)) : true;
         const bOK = fB ? e.beruf === fB : true;
         return qOK && bOK;
       });
 
-      // alphabetisch nach Betrieb
       list.sort((a,b)=> a.betrieb.localeCompare(b.betrieb,'de',{sensitivity:'base'}));
 
-      // rendern
       els.list.innerHTML = list.map(e => `
         <article class="card">
           <h3 title="${esc(e.betrieb)}">${esc(e.betrieb)}</h3>
@@ -274,7 +263,6 @@
         </article>
       `).join('');
 
-      // Aktionen
       els.list.querySelectorAll('[data-edit]').forEach(b=>{
         b.addEventListener('click', ev=>{
           const id = ev.currentTarget.getAttribute('data-edit');
