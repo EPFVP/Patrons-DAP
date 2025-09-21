@@ -56,9 +56,12 @@
 <body>
   <header>
     <div class="inner">
-      <div>
-        <h1>Patrons de stage</h1>
-        <div class="sub">Schnelle Übersicht für Lehrkräfte – Suche, Filter, Import/Export</div>
+      <div style="display:flex;align-items:center;gap:14px">
+        <img src="fieldgen-logo.png" alt="Fieldgen Logo" style="height:50px">
+        <div>
+          <h1>Patrons de stage</h1>
+          <div class="sub">Schnelle Übersicht für Lehrkräfte – Suche, Filter, Import/Export</div>
+        </div>
       </div>
       <div class="toolbar">
         <button class="btn ghost" id="btnExport">Export</button>
@@ -290,12 +293,3 @@
         if(!requireCode()) return;
         state.entries = state.entries.filter(x=>x.id!==id); save(); render(); toast('Gelöscht');
       }));
-    }
-
-    function esc(s){ return String(s||'').replace(/[&<>\"]/g, c=> ({'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;'}[c])) }
-
-    hydrateFilters(); render();
-  })();
-  </script>
-</body>
-</html>
