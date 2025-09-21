@@ -10,43 +10,19 @@
     html,body{height:100%}
     body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;background:#f6f7fb;color:#0f172a;line-height:1.45}
 
-    /* Header */
     header{
       background:linear-gradient(90deg,#3b82f6,#2563eb);
       color:#fff;
-      padding:32px 16px; /* höheres Feld */
+      padding:32px 16px;
     }
-    .header-inner{
-      max-width:1100px;
-      margin:0 auto;
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:16px;
-      flex-wrap:wrap
-    }
-    .brand{
-      display:flex;
-      align-items:center;
-      gap:14px;
-      min-width:0
-    }
-    .brand img{height:64px} /* Logo größer */
-    .brand h1{
-      margin:0;
-      font-size:32px; /* Überschrift größer */
-      font-weight:800;
-      letter-spacing:0.5px;
-    }
-
+    .header-inner{max-width:1100px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+    .brand{display:flex;align-items:center;gap:14px;min-width:0}
+    .brand img{height:64px}
+    .brand h1{margin:0;font-size:32px;font-weight:800;letter-spacing:.5px}
     .actions-top{display:flex;gap:10px;align-items:center}
-    .btn-primary{
-      background:#fff;color:#0f172a;border:1px solid #ffffff40;
-      padding:10px 14px;border-radius:12px;font-weight:700;cursor:pointer
-    }
+    .btn-primary{background:#fff;color:#0f172a;border:1px solid #ffffff40;padding:10px 14px;border-radius:12px;font-weight:700;cursor:pointer}
     .btn-primary:hover{background:#f3f4f6}
 
-    /* Rest wie vorher */
     .container{max-width:1100px;margin:20px auto 80px;padding:0 16px}
     .filter{background:#fff;border:1px solid #e5e7eb;border-radius:16px;box-shadow:0 6px 18px rgba(15,23,42,.06);padding:16px;display:grid;gap:14px}
     @media(min-width:720px){.filter{grid-template-columns:2fr 1fr}}
@@ -65,10 +41,7 @@
     .btn-edit{background:#e0f2fe;color:#075985}.btn-edit:hover{background:#bae6fd}
     .btn-del{background:#fee2e2;color:#b91c1c}.btn-del:hover{background:#fecaca}
 
-    #btnNewFloat{
-      position:fixed;right:22px;bottom:22px;width:56px;height:56px;border-radius:50%;border:0;
-      background:#2563eb;color:#fff;font-size:26px;box-shadow:0 6px 18px rgba(2,6,23,.25);cursor:pointer;z-index:50
-    }
+    #btnNewFloat{position:fixed;right:22px;bottom:22px;width:56px;height:56px;border-radius:50%;border:0;background:#2563eb;color:#fff;font-size:26px;box-shadow:0 6px 18px rgba(2,6,23,.25);cursor:pointer;z-index:50}
     #btnNewFloat:hover{background:#1e40af}
 
     #dialog{position:fixed;inset:0;background:rgba(0,0,0,.4);display:none;align-items:center;justify-content:center;padding:16px;z-index:100}
@@ -85,14 +58,11 @@
   </style>
 </head>
 <body>
-  <!-- Header -->
   <header>
     <div class="header-inner">
       <div class="brand">
         <img src="fieldgen-logo.png" alt="Fieldgen Logo">
-        <div>
-          <h1>Patrons de stage</h1>
-        </div>
+        <div><h1>Patrons de stage</h1></div>
       </div>
       <div class="actions-top">
         <button class="btn-primary" id="btnNewTop">➕ Neuer Betrieb</button>
@@ -150,10 +120,10 @@
 
   <script>
   (function(){
-    const LS_KEY = 'patrons_stage_v8';
+    const API_URL = "https://script.google.com/macros/s/AKfycbxUpU2C2miqf8iMYSmK5b3ILawVz5uUs8wzEjh7PQKQvnrIMV47fj0YNB81uDqwdMIzkg/exec";  // deine Web-App URL
     const DELETE_CODE = '1130';
 
-    const state = load();
+    const state = { entries: [], berufe: [] };
     const els = {
       list: document.getElementById('list'),
       q: document.getElementById('q'),
@@ -174,14 +144,10 @@
       toast: document.getElementById('toast'),
     };
 
-    if(state.entries.length === 0){
-      state.entries.push(
-        {id:uid(), betrieb:'Boulangerie du Parc', beruf:'Bäcker/in', adresse:'Avenue du Parc 3, Luxembourg', kontakt:'Mina Pereira – +352 2211 3344', remarque:'Früher Beginn'},
-        {id:uid(), betrieb:'Holzkunst Wagner', beruf:'Schreiner/in', adresse:"Rue de l'Atelier 12, Ettelbruck", kontakt:'Jean Wagner – +352 2456 7890', remarque:'Gute Betreuung'}
-      );
-      save();
-    }
+    // Initial laden
+    loadRemote().then(()=>{ hydrateFilters(); render(); }).catch(err=>{ console.error(err); showToast('Fehler beim Laden'); });
 
+    // Events
     els.q.addEventListener('input', render);
     els.fBeruf.addEventListener('change', render);
     els.btnNewTop.addEventListener('click', ()=> openDialog());
@@ -190,13 +156,40 @@
     els.dlgSave.addEventListener('click', saveEntry);
     els.dlgDelete.addEventListener('click', deleteEntry);
 
-    function uid(){ return Math.random().toString(36).slice(2,10) }
-    function load(){ try{ return JSON.parse(localStorage.getItem(LS_KEY)) || {entries:[], berufe:[]} }catch{ return {entries:[], berufe:[]} } }
-    function save(){ localStorage.setItem(LS_KEY, JSON.stringify(state)); }
     function showToast(msg){ els.toast.textContent = msg; els.toast.classList.add('show'); setTimeout(()=> els.toast.classList.remove('show'), 1800); }
+    function uid(){ return Math.random().toString(36).slice(2,10) }
+
+    async function loadRemote(){
+      const url = API_URL + "?action=list";
+      const res = await fetch(url, { method: 'GET' });
+      const data = await res.json();
+      if(!data.ok) throw new Error('Backend-Fehler');
+      state.entries = data.entries || [];
+      state.berufe = Array.from(new Set(state.entries.map(e=>e.beruf).filter(Boolean))).sort((a,b)=>a.localeCompare(b,'de'));
+    }
+
+    async function saveRemote(item){
+      const res = await fetch(API_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'save', item })
+      });
+      const data = await res.json();
+      if(!data.ok) throw new Error('Speichern fehlgeschlagen');
+      return data.item;
+    }
+
+    async function deleteRemote(id, code){
+      const res = await fetch(API_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'delete', id, code })
+      });
+      const data = await res.json();
+      if(!data.ok) throw new Error(data.error || 'Löschen fehlgeschlagen');
+    }
 
     let editingId = null;
-
     function openDialog(entry){
       editingId = entry?.id || null;
       els.dlgTitle.textContent = editingId ? 'Eintrag bearbeiten' : 'Neuer Betrieb';
@@ -210,7 +203,7 @@
     }
     function closeDialog(){ els.dialog.classList.remove('open'); }
 
-    function saveEntry(){
+    async function saveEntry(){
       const item = {
         id: editingId || uid(),
         betrieb: els.iBetrieb.value.trim(),
@@ -222,25 +215,27 @@
       if(!item.betrieb || !item.beruf || !item.adresse || !item.kontakt){
         return showToast('Bitte Betrieb, Beruf, Adresse, Kontakt ausfüllen');
       }
-      const idx = state.entries.findIndex(e=> e.id===item.id);
-      if(idx>=0) state.entries[idx]=item; else state.entries.push(item);
-      if(item.beruf && !state.berufe.includes(item.beruf)) state.berufe.push(item.beruf);
-      state.berufe.sort((a,b)=> a.localeCompare(b,'de'));
-      save(); hydrateFilters(); render(); closeDialog(); showToast('Gespeichert');
+      try{
+        const saved = await saveRemote(item);
+        const idx = state.entries.findIndex(e=> e.id===saved.id);
+        if(idx>=0) state.entries[idx]=saved; else state.entries.push(saved);
+        hydrateFilters(); render(); closeDialog(); showToast('Gespeichert');
+      }catch(e){ console.error(e); showToast('Fehler beim Speichern'); }
     }
 
-    function requireCode(){
-      const entered = prompt('Bitte Code eingeben, um zu löschen:'); if(entered===null) return false;
-      if(entered!==DELETE_CODE){ showToast('Falscher Code'); return false; } return true;
-    }
-    function deleteEntry(){
-      if(!editingId) return; if(!requireCode()) return;
-      state.entries = state.entries.filter(e=> e.id!==editingId);
-      save(); render(); closeDialog(); showToast('Gelöscht');
+    async function deleteEntry(){
+      if(!editingId) return;
+      const entered = prompt('Bitte Code eingeben, um zu löschen:');
+      if(entered===null) return;
+      try{
+        await deleteRemote(editingId, entered);
+        state.entries = state.entries.filter(e=> e.id!==editingId);
+        render(); closeDialog(); showToast('Gelöscht');
+      }catch(e){ console.error(e); showToast('Falscher Code oder Fehler'); }
     }
 
     function hydrateFilters(){
-      const all = Array.from(new Set((state.berufe||[]).concat(state.entries.map(e=>e.beruf)))).filter(Boolean).sort((a,b)=> a.localeCompare(b,'de'));
+      const all = Array.from(new Set(state.entries.map(e=>e.beruf).filter(Boolean))).sort((a,b)=> a.localeCompare(b,'de'));
       els.fBeruf.innerHTML = '<option value="">Alle</option>' + all.map(b=>`<option>${esc(b)}</option>`).join('');
       els.dlBerufe.innerHTML = all.map(b=>`<option value="${esc(b)}">`).join('');
     }
@@ -279,18 +274,20 @@
         });
       });
       els.list.querySelectorAll('[data-del]').forEach(b=>{
-        b.addEventListener('click', ev=>{
+        b.addEventListener('click', async ev=>{
           const id = ev.currentTarget.getAttribute('data-del');
-          if(!requireCode()) return;
-          state.entries = state.entries.filter(x=> x.id!==id);
-          save(); render(); showToast('Gelöscht');
+          const entered = prompt('Bitte Code eingeben, um zu löschen:');
+          if(entered===null) return;
+          try{
+            await deleteRemote(id, entered);
+            state.entries = state.entries.filter(x=> x.id!==id);
+            render(); showToast('Gelöscht');
+          }catch(e){ console.error(e); showToast('Falscher Code oder Fehler'); }
         });
       });
     }
 
     function esc(s){ return String(s||'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
-
-    hydrateFilters(); render();
   })();
   </script>
 </body>
