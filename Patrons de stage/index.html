@@ -1,0 +1,294 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Patrons de stage</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    *,*::before,*::after{box-sizing:border-box}
+    html,body{height:100%}
+    body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;background:#f6f7fb;color:#0f172a;line-height:1.45}
+
+    header{
+      background:linear-gradient(90deg,#3b82f6,#2563eb);
+      color:#fff;
+      padding:32px 16px;
+    }
+    .header-inner{max-width:1100px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+    .brand{display:flex;align-items:center;gap:14px;min-width:0}
+    .brand img{height:64px}
+    .brand h1{margin:0;font-size:32px;font-weight:800;letter-spacing:.5px}
+    .actions-top{display:flex;gap:10px;align-items:center}
+    .btn-primary{background:#fff;color:#0f172a;border:1px solid #ffffff40;padding:10px 14px;border-radius:12px;font-weight:700;cursor:pointer}
+    .btn-primary:hover{background:#f3f4f6}
+
+    .container{max-width:1100px;margin:20px auto 80px;padding:0 16px}
+    .filter{background:#fff;border:1px solid #e5e7eb;border-radius:16px;box-shadow:0 6px 18px rgba(15,23,42,.06);padding:16px;display:grid;gap:14px}
+    @media(min-width:720px){.filter{grid-template-columns:2fr 1fr}}
+    label{display:block;font-weight:600;margin-bottom:6px}
+    input,select,textarea{width:100%;padding:11px 12px;border:1px solid #e5e7eb;border-radius:10px;font:inherit;background:#fff}
+    input:focus,select:focus,textarea:focus{outline:none;border-color:#93c5fd;box-shadow:0 0 0 2px #bfdbfe}
+
+    .grid{display:grid;gap:18px;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));margin-top:16px}
+    .card{display:flex;flex-direction:column;gap:8px;background:#fff;border:1px solid #e5e7eb;border-radius:16px;padding:18px;box-shadow:0 6px 18px rgba(15,23,42,.06);overflow-wrap:anywhere;transition:transform .15s,box-shadow .15s}
+    .card:hover{transform:translateY(-2px);box-shadow:0 10px 24px rgba(15,23,42,.09)}
+    .card h3{margin:0 0 4px;font-size:18px;font-weight:700}
+    .info{display:grid;grid-template-columns:20px 1fr;align-items:start;gap:8px;color:#334155}
+    .info .ico{color:#2563eb}
+    .actions{margin-top:10px;display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    .btn{border:0;border-radius:10px;padding:10px 12px;font-weight:600;cursor:pointer}
+    .btn-edit{background:#e0f2fe;color:#075985}.btn-edit:hover{background:#bae6fd}
+    .btn-del{background:#fee2e2;color:#b91c1c}.btn-del:hover{background:#fecaca}
+
+    #btnNewFloat{position:fixed;right:22px;bottom:22px;width:56px;height:56px;border-radius:50%;border:0;background:#2563eb;color:#fff;font-size:26px;box-shadow:0 6px 18px rgba(2,6,23,.25);cursor:pointer;z-index:50}
+    #btnNewFloat:hover{background:#1e40af}
+
+    #dialog{position:fixed;inset:0;background:rgba(0,0,0,.4);display:none;align-items:center;justify-content:center;padding:16px;z-index:100}
+    #dialog.open{display:flex}
+    .dlg{background:#fff;border-radius:16px;width:100%;max-width:560px;border:1px solid #e5e7eb;box-shadow:0 20px 36px rgba(15,23,42,.18);max-height:min(90vh,820px);overflow:auto;padding:18px}
+    .dlg-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px}
+    .dlg-head strong{font-size:18px}
+    .dlg-foot{display:flex;justify-content:flex-end;gap:10px;margin-top:14px}
+    .btn-cancel{background:#e5e7eb}.btn-save{background:#2563eb;color:#fff}
+    .btn-cancel:hover{background:#d1d5db}.btn-save:hover{background:#1e40af}
+
+    #toast{position:fixed;right:18px;bottom:18px;background:#111827;color:#fff;padding:10px 14px;border-radius:10px;opacity:.96;display:none;z-index:120}
+    #toast.show{display:block}
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-inner">
+      <div class="brand">
+        <img src="fieldgen-logo.png" alt="Fieldgen Logo">
+        <div><h1>Patrons de stage</h1></div>
+      </div>
+      <div class="actions-top">
+        <button class="btn-primary" id="btnNewTop">➕ Neuer Betrieb</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="filter">
+      <div>
+        <label for="q">Suchen</label>
+        <input id="q" placeholder="Betrieb, Beruf, Adresse, Kontakt, Remarque">
+      </div>
+      <div>
+        <label for="fBeruf">Beruf</label>
+        <select id="fBeruf"><option value="">Alle</option></select>
+      </div>
+    </section>
+    <section class="grid" id="list"></section>
+  </main>
+
+  <button id="btnNewFloat" aria-label="Neuer Betrieb">+</button>
+
+  <div id="dialog" role="dialog" aria-modal="true" aria-labelledby="dlgTitle">
+    <div class="dlg">
+      <div class="dlg-head">
+        <strong id="dlgTitle">Neuer Betrieb</strong>
+        <button class="btn btn-cancel" id="dlgCancel">Schließen</button>
+      </div>
+
+      <label for="iBetrieb">Betrieb *</label>
+      <input id="iBetrieb"/>
+
+      <label for="iBeruf">Beruf *</label>
+      <input id="iBeruf" list="dlBerufe" placeholder="z. B. Schreiner/in"/>
+      <datalist id="dlBerufe"></datalist>
+
+      <label for="iAdresse">Adresse *</label>
+      <textarea id="iAdresse" rows="2" placeholder="Straße, PLZ Ort"></textarea>
+
+      <label for="iKontakt">Kontakt *</label>
+      <textarea id="iKontakt" rows="2" placeholder="Name, Telefon, E-Mail"></textarea>
+
+      <label for="iRemarque">Remarque</label>
+      <textarea id="iRemarque" rows="2" placeholder="Bemerkungen / Hinweise"></textarea>
+
+      <div class="dlg-foot">
+        <button class="btn btn-del" id="dlgDelete">Löschen</button>
+        <button class="btn btn-save" id="dlgSave">Speichern</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast"></div>
+
+  <script>
+  (function(){
+    const API_URL = "https://script.google.com/macros/s/AKfycbxUpU2C2miqf8iMYSmK5b3ILawVz5uUs8wzEjh7PQKQvnrIMV47fj0YNB81uDqwdMIzkg/exec";  // deine Web-App URL
+    const DELETE_CODE = '1130';
+
+    const state = { entries: [], berufe: [] };
+    const els = {
+      list: document.getElementById('list'),
+      q: document.getElementById('q'),
+      fBeruf: document.getElementById('fBeruf'),
+      btnNewTop: document.getElementById('btnNewTop'),
+      btnNewFloat: document.getElementById('btnNewFloat'),
+      dialog: document.getElementById('dialog'),
+      dlgTitle: document.getElementById('dlgTitle'),
+      dlgCancel: document.getElementById('dlgCancel'),
+      dlgDelete: document.getElementById('dlgDelete'),
+      dlgSave: document.getElementById('dlgSave'),
+      iBetrieb: document.getElementById('iBetrieb'),
+      iBeruf: document.getElementById('iBeruf'),
+      iAdresse: document.getElementById('iAdresse'),
+      iKontakt: document.getElementById('iKontakt'),
+      iRemarque: document.getElementById('iRemarque'),
+      dlBerufe: document.getElementById('dlBerufe'),
+      toast: document.getElementById('toast'),
+    };
+
+    // Initial laden
+    loadRemote().then(()=>{ hydrateFilters(); render(); }).catch(err=>{ console.error(err); showToast('Fehler beim Laden'); });
+
+    // Events
+    els.q.addEventListener('input', render);
+    els.fBeruf.addEventListener('change', render);
+    els.btnNewTop.addEventListener('click', ()=> openDialog());
+    els.btnNewFloat.addEventListener('click', ()=> openDialog());
+    els.dlgCancel.addEventListener('click', closeDialog);
+    els.dlgSave.addEventListener('click', saveEntry);
+    els.dlgDelete.addEventListener('click', deleteEntry);
+
+    function showToast(msg){ els.toast.textContent = msg; els.toast.classList.add('show'); setTimeout(()=> els.toast.classList.remove('show'), 1800); }
+    function uid(){ return Math.random().toString(36).slice(2,10) }
+
+    async function loadRemote(){
+      const url = API_URL + "?action=list";
+      const res = await fetch(url, { method: 'GET' });
+      const data = await res.json();
+      if(!data.ok) throw new Error('Backend-Fehler');
+      state.entries = data.entries || [];
+      state.berufe = Array.from(new Set(state.entries.map(e=>e.beruf).filter(Boolean))).sort((a,b)=>a.localeCompare(b,'de'));
+    }
+
+    async function saveRemote(item){
+      const res = await fetch(API_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'save', item })
+      });
+      const data = await res.json();
+      if(!data.ok) throw new Error('Speichern fehlgeschlagen');
+      return data.item;
+    }
+
+    async function deleteRemote(id, code){
+      const res = await fetch(API_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'delete', id, code })
+      });
+      const data = await res.json();
+      if(!data.ok) throw new Error(data.error || 'Löschen fehlgeschlagen');
+    }
+
+    let editingId = null;
+    function openDialog(entry){
+      editingId = entry?.id || null;
+      els.dlgTitle.textContent = editingId ? 'Eintrag bearbeiten' : 'Neuer Betrieb';
+      els.iBetrieb.value = entry?.betrieb || '';
+      els.iBeruf.value   = entry?.beruf || '';
+      els.iAdresse.value = entry?.adresse || '';
+      els.iKontakt.value = entry?.kontakt || '';
+      els.iRemarque.value= entry?.remarque || '';
+      els.dlgDelete.style.display = editingId ? 'inline-block' : 'none';
+      els.dialog.classList.add('open');
+    }
+    function closeDialog(){ els.dialog.classList.remove('open'); }
+
+    async function saveEntry(){
+      const item = {
+        id: editingId || uid(),
+        betrieb: els.iBetrieb.value.trim(),
+        beruf:   els.iBeruf.value.trim(),
+        adresse: els.iAdresse.value.trim(),
+        kontakt: els.iKontakt.value.trim(),
+        remarque:els.iRemarque.value.trim(),
+      };
+      if(!item.betrieb || !item.beruf || !item.adresse || !item.kontakt){
+        return showToast('Bitte Betrieb, Beruf, Adresse, Kontakt ausfüllen');
+      }
+      try{
+        const saved = await saveRemote(item);
+        const idx = state.entries.findIndex(e=> e.id===saved.id);
+        if(idx>=0) state.entries[idx]=saved; else state.entries.push(saved);
+        hydrateFilters(); render(); closeDialog(); showToast('Gespeichert');
+      }catch(e){ console.error(e); showToast('Fehler beim Speichern'); }
+    }
+
+    async function deleteEntry(){
+      if(!editingId) return;
+      const entered = prompt('Bitte Code eingeben, um zu löschen:');
+      if(entered===null) return;
+      try{
+        await deleteRemote(editingId, entered);
+        state.entries = state.entries.filter(e=> e.id!==editingId);
+        render(); closeDialog(); showToast('Gelöscht');
+      }catch(e){ console.error(e); showToast('Falscher Code oder Fehler'); }
+    }
+
+    function hydrateFilters(){
+      const all = Array.from(new Set(state.entries.map(e=>e.beruf).filter(Boolean))).sort((a,b)=> a.localeCompare(b,'de'));
+      els.fBeruf.innerHTML = '<option value="">Alle</option>' + all.map(b=>`<option>${esc(b)}</option>`).join('');
+      els.dlBerufe.innerHTML = all.map(b=>`<option value="${esc(b)}">`).join('');
+    }
+
+    function render(){
+      const q  = els.q.value.trim().toLowerCase();
+      const fB = els.fBeruf.value;
+
+      let list = state.entries.filter(e=>{
+        const qOK = q ? [e.betrieb,e.beruf,e.adresse,e.kontakt,e.remarque].filter(Boolean).some(v => String(v).toLowerCase().includes(q)) : true;
+        const bOK = fB ? e.beruf === fB : true;
+        return qOK && bOK;
+      });
+
+      list.sort((a,b)=> a.betrieb.localeCompare(b.betrieb,'de',{sensitivity:'base'}));
+
+      els.list.innerHTML = list.map(e => `
+        <article class="card">
+          <h3 title="${esc(e.betrieb)}">${esc(e.betrieb)}</h3>
+          <div class="info"><span class="ico">💼</span><span>${esc(e.beruf)}</span></div>
+          <div class="info"><span class="ico">📍</span><span>${esc(e.adresse)}</span></div>
+          <div class="info"><span class="ico">👤</span><span>${esc(e.kontakt)}</span></div>
+          ${e.remarque ? `<div class="info"><span class="ico">📝</span><span>${esc(e.remarque)}</span></div>` : ''}
+          <div class="actions">
+            <button class="btn btn-edit" data-edit="${e.id}">Bearbeiten</button>
+            <button class="btn btn-del"  data-del="${e.id}">Löschen</button>
+          </div>
+        </article>
+      `).join('');
+
+      els.list.querySelectorAll('[data-edit]').forEach(b=>{
+        b.addEventListener('click', ev=>{
+          const id = ev.currentTarget.getAttribute('data-edit');
+          const entry = state.entries.find(x=> x.id===id);
+          openDialog(entry);
+        });
+      });
+      els.list.querySelectorAll('[data-del]').forEach(b=>{
+        b.addEventListener('click', async ev=>{
+          const id = ev.currentTarget.getAttribute('data-del');
+          const entered = prompt('Bitte Code eingeben, um zu löschen:');
+          if(entered===null) return;
+          try{
+            await deleteRemote(id, entered);
+            state.entries = state.entries.filter(x=> x.id!==id);
+            render(); showToast('Gelöscht');
+          }catch(e){ console.error(e); showToast('Falscher Code oder Fehler'); }
+        });
+      });
+    }
+
+    function esc(s){ return String(s||'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+  })();
+  </script>
+</body>
+</html>
