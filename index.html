@@ -110,7 +110,7 @@
 
   <script>
   (function(){
-    const API_URL = "https://script.google.com/macros/s/AKfycbxfu1XN-IOdI3ab0pZsNVI8XgpyBWv-yqlXxPnSPRShgDBmggslRlqzNpcBOqQKupVUfw/exec";
+    const API_URL = "https://script.google.com/macros/s/AKfycbwveas0OKaDzarC_z7DpVQ-E3s9tfujIVgasdN3iORuwugkfeJ4ov9p5Xn-LM5PARYPeg/exec";
     const DELETE_CODE = '1130';
 
     const state = { entries: [], berufe: [] };
@@ -158,7 +158,7 @@
       state.berufe = Array.from(new Set(state.entries.map(e=>e.beruf).filter(Boolean))).sort((a,b)=>a.localeCompare(b,'de'));
     }
 
-    // --- GET-basierte Speicherung (vermeidet CORS/POST-Probleme) ---
+    // --- GET-basierte Speicherung ---
     async function saveRemote(item){
       const params = new URLSearchParams({
         action: 'save',
